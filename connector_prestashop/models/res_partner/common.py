@@ -66,10 +66,10 @@ class PrestashopResPartner(models.Model):
         oldname='openerp_id',
     )
     backend_id = fields.Many2one(
-        related='shop_group_id.backend_id',
+        # related='shop_group_id.backend_id',
         comodel_name='prestashop.backend',
         string='PrestaShop Backend',
-        store=True,
+        # store=True,
         readonly=True,
     )
     shop_group_id = fields.Many2one(

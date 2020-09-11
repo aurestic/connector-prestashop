@@ -166,7 +166,7 @@ class PrestashopImporter(AbstractComponent):
         for instance to see if another transaction already made the work.
         """
         with odoo.api.Environment.manage():
-            registry = odoo.modules.registry.RegistryManager.get(
+            registry = odoo.modules.registry.Registry(
                 self.env.cr.dbname
             )
             with closing(registry.cursor()) as cr:
@@ -379,7 +379,7 @@ class DelayedBatchImporter(AbstractComponent):
             description=description,
             channel=channel,
             identity_key=identity_key
-            ).import_record(
+        ).import_record(
             backend=self.backend_record,
             prestashop_id=external_id,
             **kwargs)
@@ -449,7 +449,7 @@ class TranslatableRecordImporter(AbstractComponent):
                   'Run "Synchronize base data".')
             )
         model_name = self.model._name
-        for language_id, language_code in languages.iteritems():
+        for language_id, language_code in languages.items():
             split_record[language_code] = record.copy()
         _fields = self._translatable_fields[model_name]
         if fields:
@@ -508,7 +508,7 @@ class TranslatableRecordImporter(AbstractComponent):
 
     def _after_import(self, binding):
         """ Hook called at the end of the import """
-        for lang_code, lang_record in self.other_langs_data.iteritems():
+        for lang_code, lang_record in self.other_langs_data.items():
             map_record = self.mapper.map_record(lang_record)
             binding.with_context(
                 lang=lang_code,

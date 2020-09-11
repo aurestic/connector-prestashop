@@ -80,6 +80,4 @@
     <menuitem id="menu_prestashop_external_products" name="External Products"
         parent="menu_prestashop_external_objects" action="action_prestashop_products" />
 
-
-
 </odoo>

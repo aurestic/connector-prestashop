@@ -30,7 +30,7 @@ class AutoMatchingImporter(Component):
         nr_ps_already_mapped = 0
         nr_ps_mapped = 0
         nr_ps_not_mapped = 0
-        erp_model_name = self.model._inherits.iterkeys().next()
+        erp_model_name = next(iter(self.model._inherits.keys()))
         erp_rec_name = self.env[erp_model_name]._rec_name
         model = self.env[erp_model_name].with_context(active_test=False)
         erp_ids = model.search([])

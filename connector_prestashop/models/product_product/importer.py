@@ -46,36 +46,37 @@ class ProductCombinationImporter(Component):
         self.import_supplierinfo(binding)
 
     def set_variant_images(self, combinations):
-        backend_adapter = self.component(
-            usage='backend.adapter',
-            model_name='prestashop.product.combination')
-        for combination in combinations:
-            try:
-                record = backend_adapter.read(combination['id'])
-                associations = record.get('associations', {})
-                ps_images = associations.get('images', {}).get(
-                    self.backend_record.get_version_ps_key('image'), {})
-                binder = self.binder_for('prestashop.product.image')
-                if not isinstance(ps_images, list):
-                    ps_images = [ps_images]
-                if 'id' in ps_images[0]:
-                    images = [
-                        binder.to_internal(x.get('id'), unwrap=True)
-                        for x in ps_images
-                    ]
-                else:
-                    images = []
-                if images:
-                    product_binder = self.binder_for(
-                        'prestashop.product.combination')
-                    product_product = product_binder.to_internal(
-                        combination['id'], unwrap=True)
-                    product_product.with_context(
-                        connector_no_export=True).write(
-                        {'image_ids': [(6, 0, [x.id for x in images])]})
-            except PrestaShopWebServiceError:
-                # TODO: don't we track anything here? Maybe a checkpoint?
-                pass
+        return True
+        # backend_adapter = self.component(
+        #     usage='backend.adapter',
+        #     model_name='prestashop.product.combination')
+        # for combination in combinations:
+        #     try:
+        #         record = backend_adapter.read(combination['id'])
+        #         associations = record.get('associations', {})
+        #         ps_images = associations.get('images', {}).get(
+        #             self.backend_record.get_version_ps_key('image'), {})
+        #         binder = self.binder_for('prestashop.product.image')
+        #         if not isinstance(ps_images, list):
+        #             ps_images = [ps_images]
+        #         if 'id' in ps_images[0]:
+        #             images = [
+        #                 binder.to_internal(x.get('id'), unwrap=True)
+        #                 for x in ps_images
+        #             ]
+        #         else:
+        #             images = []
+        #         if images:
+        #             product_binder = self.binder_for(
+        #                 'prestashop.product.combination')
+        #             product_product = product_binder.to_internal(
+        #                 combination['id'], unwrap=True)
+        #             product_product.with_context(
+        #                 connector_no_export=True).write(
+        #                 {'image_ids': [(6, 0, [x.id for x in images])]})
+        #     except PrestaShopWebServiceError:
+        #         # TODO: don't we track anything here? Maybe a checkpoint?
+        #         pass
 
     def import_supplierinfo(self, binding):
         ps_id = self._get_prestashop_data()['id']
@@ -255,7 +256,6 @@ class ProductCombinationMapper(Component):
         # ], limit=1)
         # if product:
         #     return {'odoo_id': product.id}
-
         """ Will bind the product to an existing one with the same code """
         if self.backend_record.matching_product_template:
             code = record.get(self.backend_record.matching_product_ch)
@@ -264,7 +264,7 @@ class ProductCombinationMapper(Component):
                     product = self.env['product.product'].search(
                         [('default_code', '=', code)], limit=1)
                     if product:
-                            return {'odoo_id': product.id}
+                        return {'odoo_id': product.id}
             if self.backend_record.matching_product_ch == 'barcode':
                 if code:
                     product = self.env['product.product'].search(
@@ -312,7 +312,7 @@ class ProductCombinationOptionMapper(Component):
     @only_create
     @mapping
     def odoo_id(self, record):
-        name = self.name(record)
+        name = self.name(record)['name']
         binding = self.env['product.attribute'].search(
             [('name', '=', name)],
             limit=1,
