@@ -474,7 +474,7 @@ class ProductInventoryImporter(Component):
 
         location = (self.backend_record.stock_location_id or
                     self.backend_record.warehouse_id.lot_stock_id)
-        for product in products:
+        for product in products.filtered(lambda x: x.type == 'product'):
             vals = {
                 'location_id': location.id,
                 'product_id': product.id,

@@ -46,7 +46,7 @@ class MailMessageAdapter(Component):
         """
         api = self.client
         res = api.get(self._prestashop_model, id, options=attributes)
-        first_key = res.keys()[0]
+        first_key = list(res.keys())[0]
         message_data = res[first_key]
         thread_data = api.get('customer_threads',
                               message_data['id_customer_thread'],

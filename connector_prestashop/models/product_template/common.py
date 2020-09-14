@@ -230,7 +230,7 @@ class ProductInventoryAdapter(Component):
         response = client.search(self._prestashop_model, filters)
         for stock_id in response:
             res = client.get(self._prestashop_model, stock_id)
-            first_key = res.keys()[0]
+            first_key = list(res.keys())[0]
             stock = res[first_key]
             stock['quantity'] = int(quantity['quantity'])
             stock['out_of_stock'] = int(quantity['out_of_stock'])
