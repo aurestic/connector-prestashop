@@ -17,9 +17,9 @@
         "connector_ecommerce",  # oca/connector-ecommerce
         "purchase",
         "stock_available",  # stock-logistics-warehouse
+        "base_multi_image",  # oca/product-attribute
         # Not exists in 11.0
         # "product_variant_supplierinfo",  # oca/product-variant
-        # "base_multi_image",  # oca/product-attribute
     ],
     "external_dependencies": {
         'python': [
@@ -50,7 +50,7 @@
         'views/prestashop_backend_view.xml',
         'views/product_view.xml',
         'views/product_category_view.xml',
-        # 'views/image_view.xml',
+        'views/image_view.xml',
         'views/delivery_view.xml',
         'views/connector_prestashop_menu.xml',
         'views/partner_view.xml',

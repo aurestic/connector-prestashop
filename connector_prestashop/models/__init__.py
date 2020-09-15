@@ -14,7 +14,7 @@ from . import stock_warehouse
 from . import prestashop_backend
 from . import prestashop_shop_group
 from . import product_category
-# from . import product_image
+from . import product_image
 from . import product_pricelist
 from . import product_template
 from . import product_product

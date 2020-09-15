@@ -606,21 +606,20 @@ class ProductTemplateImporter(Component):
                 self._delay_product_image_variant([first_exec] + combinations)
 
     def import_images(self, binding):
-        return True
-        # prestashop_record = self._get_prestashop_data()
-        # associations = prestashop_record.get('associations', {})
-        # images = associations.get('images', {}).get(
-        #     self.backend_record.get_version_ps_key('image'), {})
-        # if not isinstance(images, list):
-        #     images = [images]
-        # for image in images:
-        #     if image.get('id'):
-        #         delayable = self.env['prestashop.product.image'].with_delay(
-        #             priority=10)
-        #         delayable.import_product_image(
-        #             self.backend_record,
-        #             prestashop_record['id'],
-        #             image['id'])
+        prestashop_record = self._get_prestashop_data()
+        associations = prestashop_record.get('associations', {})
+        images = associations.get('images', {}).get(
+            self.backend_record.get_version_ps_key('image'), {})
+        if not isinstance(images, list):
+            images = [images]
+        for image in images:
+            if image.get('id'):
+                delayable = self.env['prestashop.product.image'].with_delay(
+                    priority=10)
+                delayable.import_product_image(
+                    self.backend_record,
+                    prestashop_record['id'],
+                    image['id'])
 
     def import_supplierinfo(self, binding):
         ps_id = self._get_prestashop_data()['id']
