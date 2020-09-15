@@ -24,7 +24,7 @@ class PrestashopExportMapper(AbstractComponent):
         res = super(PrestashopExportMapper, self)._map_direct(record,
                                                               from_attr,
                                                               to_attr) or ''
-        if isinstance(from_attr, basestring):
+        if isinstance(from_attr, str):
             column = self.model.fields_get()[from_attr]
             if column['type'] == 'boolean':
                 return res and 1 or 0
@@ -77,7 +77,7 @@ class TranslationPrestashopExportMapper(AbstractComponent):
         res = {}
         for from_attr, to_attr in translatable_fields:
             value = {'language': []}
-            for language_id, record in records_by_language.iteritems():
+            for language_id, record in records_by_language.items():
                 value['language'].append({
                     'attrs': {'id': str(language_id)},
                     'value': record[from_attr] or ''
