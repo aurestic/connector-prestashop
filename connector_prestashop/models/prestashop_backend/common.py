@@ -379,6 +379,7 @@ class PrestashopBackend(models.Model):
         root_location = (self.stock_location_id or
                          self.warehouse_id.lot_stock_id)
         locations = self.env['stock.location'].search([
+            '|', ('id', '=', root_location.id),
             ('id', 'child_of', root_location.id),
             ('prestashop_synchronized', '=', True),
             ('usage', '=', 'internal'),
@@ -387,6 +388,7 @@ class PrestashopBackend(models.Model):
         # 'prestashop_synchronized', consider we want all of them in the tree
         if not locations:
             locations = self.env['stock.location'].search([
+                '|', ('id', '=', root_location.id),
                 ('id', 'child_of', root_location.id),
                 ('usage', '=', 'internal'),
             ])

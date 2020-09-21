@@ -71,6 +71,16 @@
                 <group string="PrestaShop Bindings">
                     <field name="prestashop_bind_ids" nolabel="1"/>
                 </group>
+                <group string="Images">
+                    <field
+                        name="image_ids"
+                        nolabel="1"
+                        context="{
+                            'default_owner_model': 'product.template',
+                            'default_owner_id': id,
+                        }"
+                        mode="kanban"/>
+                </group>
            </page>
        </field>
     </record>

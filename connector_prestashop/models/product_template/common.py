@@ -21,7 +21,8 @@ except:
 
 
 class ProductTemplate(models.Model):
-    _inherit = 'product.template'
+    _name = 'product.template'
+    _inherit = ['product.template', 'base_multi_image.owner']
 
     prestashop_bind_ids = fields.One2many(
         comodel_name='prestashop.product.template',

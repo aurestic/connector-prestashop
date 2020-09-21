@@ -12,6 +12,7 @@ from odoo.addons.component.core import Component
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
+    # _inherit = ['product.product', 'base_multi_image.owner']
 
     prestashop_combinations_bind_ids = fields.One2many(
         comodel_name='prestashop.product.combination',
@@ -246,7 +247,7 @@ class ProductAttributeValue(models.Model):
 
 class PrestashopProductCombinationOptionValue(models.Model):
     _name = 'prestashop.product.combination.option.value'
-    _inherit = 'prestashop.binding'
+    _inherit = 'prestashop.binding.odoo'
     _inherits = {'product.attribute.value': 'odoo_id'}
 
     odoo_id = fields.Many2one(
