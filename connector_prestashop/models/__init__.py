@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 # keep this at the top!
 from . import binding
