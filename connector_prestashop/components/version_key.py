@@ -89,5 +89,5 @@ class VersionKey1750(Component):
         'tag': 'tag',
         'messages': 'customer_messages',
         'manufacturers': 'manufacturers',
-        'order_discounts': 'order_cart_rule'
+        'order_discounts': 'order_cart_rules'
     }

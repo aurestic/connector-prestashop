@@ -140,24 +140,25 @@ class TemplateMapper(Component):
                         model_name='prestashop.product.combination')
                     variant = backend_adapter.read(int(prod['id']))
                     code = variant.get(self.backend_record.matching_product_ch)
-                    if self.backend_record.matching_product_ch == 'reference':
-                        product = self.env['product.product'].search(
-                            [('default_code', '=', code)])
-                        if len(product) > 1:
-                            raise ValidationError(_(
-                                'Error! Multiple products found with '
-                                'combinations reference %s. Maybe consider to '
-                                'update you datas') % code)
-                        template |= product.product_tmpl_id
-                    if self.backend_record.matching_product_ch == 'barcode':
-                        product = self.env['product.product'].search(
-                            [('barcode', '=', code)])
-                        if len(product) > 1:
-                            raise ValidationError(_(
-                                'Error! Multiple products found with '
-                                'combinations reference %s. Maybe consider to '
-                                'update you datas') % code)
-                        template |= product.product_tmpl_id
+                    if code:
+                        if self.backend_record.matching_product_ch == 'reference':
+                            product = self.env['product.product'].search(
+                                [('default_code', '=', code)])
+                            if len(product) > 1:
+                                raise ValidationError(_(
+                                    'Error! Multiple products found with '
+                                    'combinations reference %s. Maybe consider to '
+                                    'update you datas') % code)
+                            template |= product.product_tmpl_id
+                        if self.backend_record.matching_product_ch == 'barcode':
+                            product = self.env['product.product'].search(
+                                [('barcode', '=', code)])
+                            if len(product) > 1:
+                                raise ValidationError(_(
+                                    'Error! Multiple products found with '
+                                    'combinations reference %s. Maybe consider to '
+                                    'update you datas') % code)
+                            template |= product.product_tmpl_id
                 _logger.debug('template %s' % template)
                 if len(template) == 1:
                     return {'odoo_id': template.id}
@@ -168,16 +169,15 @@ class TemplateMapper(Component):
                         'matching option'))
             else:
                 code = record.get(self.backend_record.matching_product_ch)
-                if self.backend_record.matching_product_ch == 'reference':
-                    if code:
+                if code:
+                    if self.backend_record.matching_product_ch == 'reference':
                         if self._template_code_exists(code):
                             product = self.env['product.template'].search(
                                 [('default_code', '=', code)], limit=1)
                             if product:
                                 return {'odoo_id': product.id}
 
-                if self.backend_record.matching_product_ch == 'barcode':
-                    if code:
+                    if self.backend_record.matching_product_ch == 'barcode':
                         product = self.env['product.template'].search(
                             [('barcode', '=', code)], limit=1)
                         if product:

@@ -50,7 +50,7 @@ class MailMessageAdapter(Component):
         thread_data = api.get('customer_threads',
                               message_data['id_customer_thread'],
                               options=attributes)
-        first_key = thread_data.keys()[0]
+        first_key = list(thread_data.keys())[0]
         del thread_data[first_key]['id']
         del thread_data[first_key]['date_add']
         message_data.update(thread_data[first_key])

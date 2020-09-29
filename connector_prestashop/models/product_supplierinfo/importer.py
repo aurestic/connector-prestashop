@@ -124,6 +124,7 @@ class SupplierInfoMapper(Component):
     def currency_id(self, record):
         binder = self.binder_for('prestashop.res.currency')
         currency = binder.to_internal(record['id_currency'], unwrap=True)
+        currency = currency or self.backend_record.company_id.currency_id
         return {'currency_id': currency.id}
 
     @mapping
