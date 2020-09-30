@@ -71,7 +71,7 @@ class ProductCombinationImporter(Component):
                         combination['id'], unwrap=True)
                     product_product.with_context(
                         connector_no_export=True).write({
-                            'image_ids': [(6, 0, [x.id for x in images])],
+                            'image_ids': [(6, 0, [x.id for x in images if x.exists()])],
                             'image': images[0].image_medium
                         })
             except PrestaShopWebServiceError:
@@ -191,21 +191,10 @@ class ProductCombinationMapper(Component):
             current_code = '%s_%s' % (code, i)
         return {'default_code': current_code}
 
-#     @mapping
-#     def backend_id(self, record):
-#         return {'backend_id': self.backend_record.id}
-
     @mapping
     def barcode(self, record):
         barcode = record.get('barcode') or record.get('ean13')
         check_ean = self.env['barcode.nomenclature'].check_ean
-        if barcode in ['', '0']:
-            backend_adapter = self.component(
-                usage='backend.adapter',
-                model_name='prestashop.product.template'
-            )
-            template = backend_adapter.read(record['id_product'])
-            barcode = template.get('barcode') or template.get('ean13')
         if barcode and barcode != '0' and check_ean(barcode):
             return {'barcode': barcode}
         return {}

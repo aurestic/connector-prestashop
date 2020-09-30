@@ -4,7 +4,7 @@ from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import mapping
 
 
-class ProductPricelistMapper(Component):
+class PrestashopGroupsPricelistMapper(Component):
     _name = 'prestashop.groups.pricelist.mapper'
     _inherit = 'prestashop.import.mapper'
     _apply_on = 'prestashop.groups.pricelist'
@@ -37,12 +37,10 @@ class ProductPricelistMapper(Component):
         return {'item_ids': [(5,), (0, 0, item)]}
 
 
-class ProductPricelistImporter(Component):
+class PrestashopGroupsPricelistImporter(Component):
     _name = 'prestashop.groups.pricelist.importer'
     _inherit = 'prestashop.translatable.record.importer'
     _apply_on = 'prestashop.groups.pricelist'
-
-    _usage = "Translate"
 
     _translatable_fields = {
         'prestashop.groups.pricelist': ['name'],

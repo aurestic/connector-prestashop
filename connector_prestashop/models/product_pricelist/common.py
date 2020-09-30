@@ -29,7 +29,7 @@ class PrestashopGroupsPricelist(models.Model):
     )
 
 
-class PricelistAdapter(Component):
+class PrestashopGroupsPricelistAdapter(Component):
     _name = 'prestashop.groups.pricelist.adapter'
     _inherit = 'prestashop.adapter'
     _apply_on = 'prestashop.groups.pricelist'
