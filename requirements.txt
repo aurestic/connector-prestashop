@@ -1,0 +1,7 @@
+html2text
+prestapyt >= 0.9.0
+unidecode
+beautifulsoup4
+# tests dependencies
+freezegun
+vcrpy==1.10.5
