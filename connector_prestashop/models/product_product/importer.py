@@ -331,6 +331,28 @@ class ProductCombinationOptionMapper(Component):
             name = record['name']
         return {'name': name}
 
+    @mapping
+    def public_name(self, record):
+        name = None
+        if 'language' in record['public_name']:
+            language_binder = self.binder_for('prestashop.res.lang')
+            languages = record['public_name']['language']
+            if not isinstance(languages, list):
+                languages = [languages]
+            for lang in languages:
+                erp_language = language_binder.to_internal(
+                    lang['attrs']['id'])
+                if not erp_language:
+                    continue
+                if erp_language.code == 'en_US':
+                    name = lang['value']
+                    break
+            if name is None:
+                name = languages[0]['value']
+        else:
+            name = record['public_name']
+        return {'public_name': name}
+
 
 class ProductCombinationOptionValueAdapter(Component):
     _name = 'prestashop.product.combination.option.value.adapter'
