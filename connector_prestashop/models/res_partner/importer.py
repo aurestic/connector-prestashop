@@ -141,12 +141,16 @@ class AddressImportMapper(Component):
         ('postcode', 'zip'),
         ('date_add', 'date_add'),
         ('date_upd', 'date_upd'),
-        (external_to_m2o('id_customer'), 'prestashop_partner_id'),
+        # (external_to_m2o('id_customer'), 'prestashop_partner_id'),
     ]
 
     @mapping
     def backend_id(self, record):
         return {'backend_id': self.backend_record.id}
+
+    @mapping
+    def prestashop_partner_id(self, record):
+        return self.parent_id(record)
 
     @mapping
     def parent_id(self, record):
@@ -210,14 +214,15 @@ class AddressImporter(Component):
             regexp = re.compile('^[a-zA-Z]{2}')
             if not regexp.match(vat_number):
                 vat_number = 'ES' + vat_number
-            if self._check_vat(vat_number):
-                binding.parent_id.write({'vat': vat_number})
-            else:
-                msg = _('Please, check the VAT number: %s') % vat_number
-                self.backend_record.add_checkpoint(
-                    binding.parent_id,
-                    message=msg,
-                )
+            if binding.parent_id:
+                if self._check_vat(vat_number):
+                    binding.parent_id.write({'vat': vat_number})
+                else:
+                    msg = _('Please, check the VAT number: %s') % vat_number
+                    self.backend_record.add_checkpoint(
+                        binding.parent_id,
+                        message=msg,
+                    )
 
 
 class AddressBatchImporter(Component):

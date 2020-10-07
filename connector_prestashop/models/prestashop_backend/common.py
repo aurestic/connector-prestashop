@@ -169,6 +169,11 @@ class PrestashopBackend(models.Model):
         string='Default Carrier',
     )
 
+    partner_id = fields.Many2one(
+        comodel_name='res.partner',
+        string='Default Partner',
+    )
+
     @api.onchange("matching_customer")
     def change_matching_customer(self):
         # Update the field list so that if you API change you could find the

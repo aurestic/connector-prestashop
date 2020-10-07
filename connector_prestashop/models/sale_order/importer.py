@@ -222,12 +222,22 @@ class SaleOrderImportMapper(Component):
     def partner_id(self, record):
         binder = self.binder_for('prestashop.res.partner')
         partner = binder.to_internal(record['id_customer'], unwrap=True)
+        if not partner:
+            # Orders without partner in prestashop.
+            partner = self.backend_record.partner_id
+            from pudb.remote import set_trace
+            set_trace(term_size=(211, 55))
+            if not partner:
+                raise OrderImportRuleRetry(
+                    'Partner not found, set default partner and retry.')
         return {'partner_id': partner.id}
 
     @mapping
     def partner_invoice_id(self, record):
         binder = self.binder_for('prestashop.address')
         address = binder.to_internal(record['id_address_invoice'], unwrap=True)
+        if not address:
+            return self.partner_id(record)
         return {'partner_invoice_id': address.id}
 
     @mapping
@@ -235,6 +245,8 @@ class SaleOrderImportMapper(Component):
         binder = self.binder_for('prestashop.address')
         shipping = binder.to_internal(record['id_address_delivery'],
                                       unwrap=True)
+        if not shipping:
+            return self.partner_id(record)
         return {'partner_shipping_id': shipping.id}
 
     @mapping
@@ -304,18 +316,35 @@ class SaleOrderImporter(Component):
     def _import_dependencies(self):
         record = self.prestashop_record
 
-        self._import_dependency(
-            record['id_customer'], 'prestashop.res.partner'
-        )
+        if record['id_customer'] != '0':
+            try:
+                self._import_dependency(
+                    record['id_customer'], 'prestashop.res.partner'
+                )
+            except PrestaShopWebServiceError as err:
+                # we ignore it, customer not exits in prestashop
+                _logger.error('PrestaShop customer %s could not be imported, '
+                              'error: %s', record['id_customer'], err)
+
         if record['id_address_invoice'] != '0':
-            self._import_dependency(
-                record['id_address_invoice'], 'prestashop.address'
-            )
+            try:
+                self._import_dependency(
+                    record['id_address_invoice'], 'prestashop.address'
+                )
+            except PrestaShopWebServiceError as err:
+                # we ignore it, address invoice not exits in prestashop
+                _logger.error('PrestaShop address invoice %s could not be imported, '
+                              'error: %s',  record['id_address_invoice'], err)
 
         if record['id_address_delivery'] != '0':
-            self._import_dependency(
-                record['id_address_delivery'], 'prestashop.address'
-            )
+            try:
+                self._import_dependency(
+                    record['id_address_delivery'], 'prestashop.address'
+                )
+            except PrestaShopWebServiceError as err:
+                # we ignore it, address delivery not exits in prestashop
+                _logger.error('PrestaShop addres delivery %s could not be imported, '
+                              'error: %s',  record['id_address_delivery'], err)
 
         if record['id_carrier'] != '0':
             try:
