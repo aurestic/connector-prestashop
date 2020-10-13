@@ -225,8 +225,6 @@ class SaleOrderImportMapper(Component):
         if not partner:
             # Orders without partner in prestashop.
             partner = self.backend_record.partner_id
-            from pudb.remote import set_trace
-            set_trace(term_size=(211, 55))
             if not partner:
                 raise OrderImportRuleRetry(
                     'Partner not found, set default partner and retry.')
