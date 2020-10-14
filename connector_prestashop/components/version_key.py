@@ -83,7 +83,7 @@ class VersionKey1750(Component):
         'order_slip_detail': 'order_slip_detail',
         'group': 'group',
         'order_row': 'order_row',
-        'tax': 'taxes',
+        'tax': 'tax',
         'combinations': 'combination',
         'product_features': 'product_feature',
         'tag': 'tag',
