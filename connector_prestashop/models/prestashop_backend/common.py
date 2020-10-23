@@ -164,6 +164,18 @@ class PrestashopBackend(models.Model):
         help="The timezone of the backend. Used to synchronize the sale order "
         "date.")
 
+    carrier_id = fields.Many2one(
+        comodel_name='delivery.carrier',
+        string='Default Carrier',
+        ondelete='restrict'
+    )
+
+    partner_id = fields.Many2one(
+        comodel_name='res.partner',
+        string='Default Partner',
+        ondelete='restrict'
+    )
+
     @api.onchange("matching_customer")
     def change_matching_customer(self):
         # Update the field list so that if you API change you could find the

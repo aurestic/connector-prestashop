@@ -222,12 +222,20 @@ class SaleOrderImportMapper(Component):
     def partner_id(self, record):
         binder = self.binder_for('prestashop.res.partner')
         partner = binder.to_internal(record['id_customer'], unwrap=True)
+        if not partner:
+            # Orders without partner in prestashop.
+            partner = self.backend_record.partner_id
+            if not partner:
+                raise OrderImportRuleRetry(
+                    'Partner not found, set default partner and retry.')
         return {'partner_id': partner.id}
 
     @mapping
     def partner_invoice_id(self, record):
         binder = self.binder_for('prestashop.address')
         address = binder.to_internal(record['id_address_invoice'], unwrap=True)
+        if not address:
+            return self.partner_id(record)
         return {'partner_invoice_id': address.id}
 
     @mapping
@@ -235,6 +243,8 @@ class SaleOrderImportMapper(Component):
         binder = self.binder_for('prestashop.address')
         shipping = binder.to_internal(record['id_address_delivery'],
                                       unwrap=True)
+        if not shipping:
+            return self.partner_id(record)
         return {'partner_shipping_id': shipping.id}
 
     @mapping
@@ -303,19 +313,49 @@ class SaleOrderImporter(Component):
 
     def _import_dependencies(self):
         record = self.prestashop_record
-        self._import_dependency(
-            record['id_customer'], 'prestashop.res.partner'
-        )
-        self._import_dependency(
-            record['id_address_invoice'], 'prestashop.address'
-        )
-        self._import_dependency(
-            record['id_address_delivery'], 'prestashop.address'
-        )
+
+        if record['id_customer'] != '0':
+            try:
+                self._import_dependency(
+                    record['id_customer'], 'prestashop.res.partner'
+                )
+            except PrestaShopWebServiceError as err:
+                # we ignore it, customer not exits in prestashop
+                _logger.error('PrestaShop customer %s could not be imported, '
+                              'error: %s', record['id_customer'], err)
+
+        if record['id_address_invoice'] != '0':
+            try:
+                self._import_dependency(
+                    record['id_address_invoice'], 'prestashop.address'
+                )
+            except PrestaShopWebServiceError as err:
+                # we ignore it, address invoice not exits in prestashop
+                _logger.error('PrestaShop address invoice %s could not be imported, '
+                              'error: %s',  record['id_address_invoice'], err)
+
+        if record['id_address_delivery'] != '0':
+            try:
+                self._import_dependency(
+                    record['id_address_delivery'], 'prestashop.address'
+                )
+            except PrestaShopWebServiceError as err:
+                # we ignore it, address delivery not exits in prestashop
+                _logger.error('PrestaShop addres delivery %s could not be imported, '
+                              'error: %s',  record['id_address_delivery'], err)
 
         if record['id_carrier'] != '0':
-            self._import_dependency(record['id_carrier'],
-                                    'prestashop.delivery.carrier')
+            try:
+                self._import_dependency(record['id_carrier'],
+                                        'prestashop.delivery.carrier')
+            except PrestaShopWebServiceError as err:
+                # we ignore it, carrier not exits in prestashop si hay un por defecto en Odoo
+                if self.backend_record.carrier_id:
+                    _logger.error('PrestaShop carrier %s could not be imported, '
+                                  'error: %s', record['id_carrier'], err)
+                else:
+                    raise OrderImportRuleRetry(
+                        'Carrier not found, set default carrier and retry.')
 
         rows = record['associations'] \
             .get('order_rows', {}) \
@@ -345,6 +385,15 @@ class SaleOrderImporter(Component):
                 binding.odoo_id.carrier_id,
                 shipping_total
             )
+        elif shipping_total:
+            if self.backend_record.carrier_id:
+                binding.odoo_id._create_delivery_line(
+                    self.backend_record.carrier_id,
+                    shipping_total
+                )
+            else:
+                raise OrderImportRuleRetry(
+                    'Carrier not found, set default carrier and retry.')
         binding.odoo_id.recompute()
 
     def _create(self, data):
@@ -419,6 +468,7 @@ class SaleOrderLineMapper(Component):
 
     @mapping
     def product_id(self, record):
+        product = self.env['product.product']
         if int(record.get('product_attribute_id', 0)):
             combination_binder = self.binder_for(
                 'prestashop.product.combination'
@@ -427,7 +477,7 @@ class SaleOrderLineMapper(Component):
                 record['product_attribute_id'],
                 unwrap=True,
             )
-        else:
+        if not product:
             binder = self.binder_for('prestashop.product.template')
             template = binder.to_internal(record['product_id'], unwrap=True)
             product = self.env['product.product'].search([

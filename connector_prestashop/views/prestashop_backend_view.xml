@@ -58,6 +58,8 @@
                             <field name="tz"/>
                             <field name="pricelist_id" />
                             <field name="sale_team_id" />
+                            <field name="partner_id" />
+                            <field name="carrier_id" />
                             <field name="importable_order_state_ids" widget="many2many_tags" />
                             <field name="discount_product_id" />
                         </group>

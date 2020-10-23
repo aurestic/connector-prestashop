@@ -127,7 +127,6 @@ class PrestashopAddress(models.Model):
     prestashop_partner_id = fields.Many2one(
         comodel_name='prestashop.res.partner',
         string='PrestaShop Partner',
-        required=True,
         ondelete='cascade',
     )
     backend_id = fields.Many2one(
