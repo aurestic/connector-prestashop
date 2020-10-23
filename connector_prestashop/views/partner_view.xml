@@ -61,7 +61,6 @@
         <field name="arch" type="xml">
             <form string="PrestaShop Address">
                 <group>
-                    <!-- <field name="shop_group_id"/> -->
                     <field name="backend_id"/>
                     <field name="prestashop_partner_id"/>
                     <field name="prestashop_id"/>
@@ -79,7 +78,6 @@
         <field name="arch" type="xml">
             <tree string="PrestaShop Address">
                 <field name="backend_id"/>
-                <!-- <field name="shop_group_id"/> -->
             </tree>
         </field>
     </record>

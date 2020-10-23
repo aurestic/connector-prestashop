@@ -95,8 +95,6 @@ class RefundAdapter(Component):
     _apply_on = 'prestashop.refund'
     _export_node_name = 'order_slip'
 
-    # _model_name = 'prestashop.refund'
-
     @property
     def _prestashop_model(self):
         return self.backend_record.get_version_ps_key('order_slip')

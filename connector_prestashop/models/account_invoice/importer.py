@@ -15,8 +15,6 @@ class RefundImporter(Component):
     _inherit = 'prestashop.importer'
     _apply_on = 'prestashop.refund'
 
-    # _model_name = 'prestashop.refund'
-
     def _import_dependencies(self):
         record = self.prestashop_record
         self._import_dependency(
@@ -44,7 +42,6 @@ class RefundMapper(Component):
     _name = 'prestashop.refund.mapper'
     _inherit = 'prestashop.import.mapper'
     _apply_on = 'prestashop.refund'
-    # _model_name = 'prestashop.refund'
 
     direct = [
         ('id', 'name'),
@@ -243,5 +240,3 @@ class RefundBatchImporter(Component):
     _name = 'prestashop.refund.batch.importer'
     _inherit = 'prestashop.delayed.batch.importer'
     _apply_on = 'prestashop.refund'
-
-    # _model_name = 'prestashop.refund'
