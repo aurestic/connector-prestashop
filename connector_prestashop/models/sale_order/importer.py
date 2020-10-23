@@ -349,9 +349,13 @@ class SaleOrderImporter(Component):
                 self._import_dependency(record['id_carrier'],
                                         'prestashop.delivery.carrier')
             except PrestaShopWebServiceError as err:
-                # we ignore it, carrier not exits in prestashop
-                _logger.error('PrestaShop carrier %s could not be imported, '
-                              'error: %s',  record['id_carrier'], err)
+                # we ignore it, carrier not exits in prestashop si hay un por defecto en Odoo
+                if self.backend_record.carrier_id:
+                    _logger.error('PrestaShop carrier %s could not be imported, '
+                                  'error: %s', record['id_carrier'], err)
+                else:
+                    raise OrderImportRuleRetry(
+                        'Carrier not found, set default carrier and retry.')
 
         rows = record['associations'] \
             .get('order_rows', {}) \

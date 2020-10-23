@@ -91,9 +91,11 @@ class PrestashopRefund(models.Model):
 
 class RefundAdapter(Component):
     _name = 'prestashop.refund.adapter'
+    _inherit = 'prestashop.adapter'
     _apply_on = 'prestashop.refund'
+    _export_node_name = 'order_slip'
 
-    _model_name = 'prestashop.refund'
+    # _model_name = 'prestashop.refund'
 
     @property
     def _prestashop_model(self):
