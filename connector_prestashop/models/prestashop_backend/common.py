@@ -167,11 +167,13 @@ class PrestashopBackend(models.Model):
     carrier_id = fields.Many2one(
         comodel_name='delivery.carrier',
         string='Default Carrier',
+        ondelete='restrict'
     )
 
     partner_id = fields.Many2one(
         comodel_name='res.partner',
         string='Default Partner',
+        ondelete='restrict'
     )
 
     @api.onchange("matching_customer")
