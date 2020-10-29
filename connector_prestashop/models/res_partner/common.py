@@ -65,10 +65,8 @@ class PrestashopResPartner(models.Model):
         oldname='openerp_id',
     )
     backend_id = fields.Many2one(
-        # related='shop_group_id.backend_id',
         comodel_name='prestashop.backend',
         string='PrestaShop Backend',
-        # store=True,
         readonly=True,
     )
     shop_group_id = fields.Many2one(
@@ -132,8 +130,6 @@ class PrestashopAddress(models.Model):
     backend_id = fields.Many2one(
         comodel_name='prestashop.backend',
         string='PrestaShop Backend',
-        related='prestashop_partner_id.backend_id',
-        store=True,
         readonly=True,
     )
     odoo_id = fields.Many2one(

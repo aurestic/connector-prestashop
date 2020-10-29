@@ -29,6 +29,10 @@ class PartnerImportMapper(Component):
     ]
 
     @mapping
+    def backend_id(self, record):
+        return {'backend_id': self.backend_record.id}
+
+    @mapping
     def pricelist(self, record):
         binder = self.binder_for('prestashop.groups.pricelist')
         pricelist = binder.to_internal(record['id_default_group'], unwrap=True)
