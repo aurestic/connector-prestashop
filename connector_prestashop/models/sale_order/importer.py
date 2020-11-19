@@ -486,6 +486,8 @@ class SaleOrderLineMapper(Component):
                 ('company_id', '=', False)],
                 limit=1,
             )
+            if not product:
+                product = self.backend_record.product_id
         if not product:
             return {}
         return {
