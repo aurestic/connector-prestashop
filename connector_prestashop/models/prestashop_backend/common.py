@@ -175,6 +175,11 @@ class PrestashopBackend(models.Model):
         string='Default Partner',
         ondelete='restrict'
     )
+    product_id = fields.Many2one(
+        comodel_name='product.product',
+        string='Default Product',
+        ondelete='restrict'
+    )
 
     @api.onchange("matching_customer")
     def change_matching_customer(self):
