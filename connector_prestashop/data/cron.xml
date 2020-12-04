@@ -10,8 +10,8 @@
         <field name="numbercall">-1</field>
         <field name="doall" eval="False"/>
         <field name="model_id" ref="model_prestashop_backend"/>
-        <field name="function" eval="'_scheduler_import_sale_orders'"/>
-        <field name="args" eval="'()'"/>
+        <field name="state" eval="'code'"/>
+        <field name="code" eval="'model._scheduler_import_sale_orders()'"/>
     </record>
 
     <record forcecreate="True" id="ir_cron_update_product_stock_qty" model="ir.cron">
@@ -23,8 +23,8 @@
         <field name="numbercall">-1</field>
         <field name="doall" eval="False"/>
         <field name="model_id" ref="model_prestashop_backend"/>
-        <field name="function" eval="'_scheduler_update_product_stock_qty'"/>
-        <field name="args" eval="'()'"/>
+        <field name="state" eval="'code'"/>
+        <field name="code" eval="'model._scheduler_update_product_stock_qty()'"/>
     </record>
 
     <record forcecreate="True" id="ir_cron_import_customers" model="ir.cron">
@@ -36,8 +36,8 @@
         <field name="numbercall">-1</field>
         <field name="doall" eval="False"/>
         <field name="model_id" ref="model_prestashop_backend"/>
-        <field name="function" eval="'_scheduler_import_customers'"/>
-        <field name="args" eval="'()'"/>
+        <field name="state" eval="'code'"/>
+        <field name="code" eval="'model._scheduler_import_customers()'"/>
     </record>
 
     <record forcecreate="True" id="ir_cron_import_products" model="ir.cron">
@@ -49,8 +49,8 @@
         <field name="numbercall">-1</field>
         <field name="doall" eval="False"/>
         <field name="model_id" ref="model_prestashop_backend"/>
-        <field name="function" eval="'_scheduler_import_products'"/>
-        <field name="args" eval="'()'"/>
+        <field name="state" eval="'code'"/>
+        <field name="code" eval="'model._scheduler_import_products()'"/>
     </record>
 
     <record forcecreate="True" id="ir_cron_import_suppliers" model="ir.cron">
@@ -62,8 +62,8 @@
         <field name="numbercall">-1</field>
         <field name="doall" eval="False"/>
         <field name="model_id" ref="model_prestashop_backend"/>
-        <field name="function" eval="'_scheduler_import_suppliers'"/>
-        <field name="args" eval="'()'"/>
+        <field name="state" eval="'code'"/>
+        <field name="code" eval="'model._scheduler_import_suppliers()'"/>
     </record>
 
     <record forcecreate="True" id="ir_cron_import_carriers" model="ir.cron">
@@ -75,8 +75,8 @@
         <field name="numbercall">-1</field>
         <field name="doall" eval="False"/>
         <field name="model_id" ref="model_prestashop_backend"/>
-        <field name="function" eval="'_scheduler_import_carriers'"/>
-        <field name="args" eval="'()'"/>
+        <field name="state" eval="'code'"/>
+        <field name="code" eval="'model._scheduler_import_carriers()'"/>
     </record>
 
     <record forcecreate="True" id="ir_cron_import_payment_modes" model="ir.cron">
@@ -88,8 +88,8 @@
         <field name="numbercall">-1</field>
         <field name="doall" eval="False"/>
         <field name="model_id" ref="model_prestashop_backend"/>
-        <field name="function" eval="'_scheduler_import_payment_modes'"/>
-        <field name="args" eval="'()'"/>
+        <field name="state" eval="'code'"/>
+        <field name="code" eval="'model._scheduler_import_payment_modes()'"/>
     </record>
 
 </odoo>
