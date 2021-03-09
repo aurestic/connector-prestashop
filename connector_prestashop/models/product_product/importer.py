@@ -239,15 +239,11 @@ class ProductCombinationMapper(Component):
     @only_create
     @mapping
     def odoo_id(self, record):
-        # product = self.env['product.product'].search([
-        #     ('default_code', '=', record['reference']),
-        #     ('prestashop_bind_ids', '=', False),
-        # ], limit=1)
-        # if product:
-        #     return {'odoo_id': product.id}
         """ Will bind the product to an existing one with the same code """
         if self.backend_record.matching_product_template:
             code = record.get(self.backend_record.matching_product_ch)
+            if not code and self.backend_record.matching_product_ch == 'barcode':
+                code = variant.get('ean13')
             if self.backend_record.matching_product_ch == 'reference':
                 if code:
                     product = self.env['product.product'].search(

@@ -2,14 +2,6 @@
 
 from odoo import _, models, api
 from odoo.addons.queue_job.job import job
-# from odoo.addons.connector.components.mapper import (
-#     mapping,
-#     only_create,
-# )
-# from ...components.importer import (
-#     import_record,
-#     import_batch,
-# )
 from odoo.addons.component.core import Component
 from odoo.addons.connector.components.mapper import (
     mapping, external_to_m2o, only_create)
@@ -118,10 +110,6 @@ class TemplateMapper(Component):
     @mapping
     def odoo_id(self, record):
         """ Will bind the product to an existing one with the same code """
-#         product = self.env['product.template'].search(
-#             [('default_code', '=', record['reference'])], limit=1)
-#         if product:
-#             return {'odoo_id': product.id}
         if self.backend_record.matching_product_template:
             if self.has_combinations(record):
                 # Browse combinations for matching products and find if there
@@ -140,6 +128,8 @@ class TemplateMapper(Component):
                         model_name='prestashop.product.combination')
                     variant = backend_adapter.read(int(prod['id']))
                     code = variant.get(self.backend_record.matching_product_ch)
+                    if not code and self.backend_record.matching_product_ch == 'barcode':
+                        code = variant.get('ean13')
                     if code:
                         if self.backend_record.matching_product_ch == 'reference':
                             product = self.env['product.product'].search(
@@ -169,6 +159,8 @@ class TemplateMapper(Component):
                         'matching option'))
             else:
                 code = record.get(self.backend_record.matching_product_ch)
+                if not code and self.backend_record.matching_product_ch == 'barcode':
+                        code = record.get('ean13')
                 if code:
                     if self.backend_record.matching_product_ch == 'reference':
                         if self._template_code_exists(code):
