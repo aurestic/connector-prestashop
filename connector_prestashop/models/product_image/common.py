@@ -74,9 +74,9 @@ class ProductImageAdapter(Component):
         url = '{}/{}'.format(self._prestashop_model, attributes['id_product'])
         return api.add(url, files=[(
             'image',
-            attributes['filename'].encode('utf-8'),
-            base64.b64decode(attributes['content'])
-        )])
+            attributes['filename'],
+            base64.b64decode(attributes['content']).decode('latin-1')
+        )]).get('prestashop').get('image').get('id')
 
     def write(self, id, attributes=None):
         api = self.connect()
@@ -90,9 +90,9 @@ class ProductImageAdapter(Component):
             pass
         return api.add(url, files=[(
             'image',
-            attributes['filename'].encode('utf-8'),
-            base64.b64decode(attributes['content'])
-        )])
+            attributes['filename'],
+            base64.b64decode(attributes['content']).decode('latin-1')
+        )]).get('prestashop').get('image').get('id')
 
     def delete(self, resource, id):
         """ Delete a record on the external system """

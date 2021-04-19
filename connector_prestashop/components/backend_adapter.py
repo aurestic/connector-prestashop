@@ -223,7 +223,7 @@ class GenericAdapter(AbstractComponent):
             return res['prestashop'][self._export_node_name_res]['id']
         return res
 
-    def delete(self, resource, ids):
+    def delete(self, resource, ids, attributes=None):
         _logger.debug('method delete, model %s, ids %s',
                       resource, str(ids))
         # Delete a record(s) on the external system

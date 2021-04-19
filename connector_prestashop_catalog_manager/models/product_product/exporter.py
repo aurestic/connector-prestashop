@@ -21,23 +21,23 @@ class ProductCombinationExporter(Component):
         res = super(ProductCombinationExporter, self)._create(record)
         return res['prestashop']['combination']['id']
 
-    # def _export_images(self):
-    #     if self.binding.image_ids:
-    #         image_binder = self.binder_for('prestashop.product.image')
-    #         for image_line in self.binding.image_ids:
-    #             image_ext_id = image_binder.to_external(
-    #                 image_line.id, wrap=True)
-    #             if not image_ext_id:
-    #                 image_ext = \
-    #                     self.env['prestashop.product.image']\
-    #                         .with_context(connector_no_export=True).create({
-    #                             'backend_id': self.backend_record.id,
-    #                             'odoo_id': image_line.id,
-    #                         }).id
-    #                 image_content = getattr(image_line, "_get_image_from_%s" %
-    #                                         image_line.storage)()
-    #                 image_ext.export_record(
-    #                     image_content)
+    def _export_images(self):
+        if self.binding.image_ids:
+            image_binder = self.binder_for('prestashop.product.image')
+            for image_line in self.binding.image_ids:
+                image_ext_id = image_binder.to_external(
+                    image_line.id, wrap=True)
+                if not image_ext_id:
+                    image_ext = \
+                        self.env['prestashop.product.image']\
+                            .with_context(connector_no_export=True).create({
+                                'backend_id': self.backend_record.id,
+                                'odoo_id': image_line.id,
+                            })
+                    image_content = getattr(image_line, "_get_image_from_%s" %
+                                            image_line.storage)()
+                    image_ext.export_record(
+                        image_content)
 
     def _export_dependencies(self):
         """ Export the dependencies for the product"""
@@ -67,7 +67,7 @@ class ProductCombinationExporter(Component):
                         'id_attribute_group': attribute_ext_id
                     })
                 value_ext.export_record()
-        # self._export_images()
+        self._export_images()
 
     def update_quantities(self):
         self.binding.odoo_id.with_context(
@@ -134,14 +134,14 @@ class ProductCombinationExportMapper(Component):
                 option_value.append({'id': value_ext_id})
         return option_value
 
-    # def _get_combination_image(self, record):
-    #     images = []
-    #     image_binder = self.binder_for('prestashop.product.image')
-    #     for image in record.image_ids:
-    #         image_ext_id = image_binder.to_external(image.id, wrap=True)
-    #         if image_ext_id:
-    #             images.append({'id': image_ext_id})
-    #     return images
+    def _get_combination_image(self, record):
+        images = []
+        image_binder = self.binder_for('prestashop.product.image')
+        for image in record.image_ids:
+            image_ext_id = image_binder.to_external(image.id, wrap=True)
+            if image_ext_id:
+                images.append({'id': image_ext_id})
+        return images
 
     @changed_by('attribute_value_ids', 'image_ids')
     @mapping
@@ -151,9 +151,9 @@ class ProductCombinationExportMapper(Component):
                 'product_option_values': {
                     'product_option_value': self._get_product_option_value(record)
                 },
-                # 'images': {
-                #     'image': self._get_combination_image(record)
-                # }
+                'images': {
+                    'image': self._get_combination_image(record)
+                }
             }
         }
 
