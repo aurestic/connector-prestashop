@@ -20,11 +20,9 @@ class ProductImageExporter(Component):
 
         if self._has_to_skip():
             return
-
         # export the missing linked resources
         self._export_dependencies()
         map_record = self.mapper.map_record(self.binding)
-
         if self.prestashop_id:
             record = map_record.values()
             if not record:

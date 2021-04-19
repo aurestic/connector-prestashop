@@ -68,12 +68,14 @@ class PrestashopBinding(models.AbstractModel):
             return exporter.run(self, fields)
 
     @job(default_channel='root.prestashop')
-    def export_delete_record(self, backend, external_id):
+    @related_action(action='related_action_record')
+    @api.multi
+    def export_delete_record(self, backend, external_id, attributes=None):
         """ Delete a record on PrestaShop """
         self.check_active(backend)
         with backend.work_on(self._name) as work:
             deleter = work.component(usage='record.exporter.deleter')
-            return deleter.run(external_id)
+            return deleter.run(external_id, attributes)
 
     # TODO: Research
     @api.multi

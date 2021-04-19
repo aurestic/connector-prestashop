@@ -43,28 +43,32 @@ class ProductProductListener(Component):
     _inherit = 'prestashop.connector.listener'
     _apply_on = 'product.product'
 
-    EXCLUDE_FIELDS = ['list_price']
+    EXCLUDE_FIELDS = ['lst_price']
 
     def prestashop_product_combination_unlink(self, record):
         # binding is deactivate when deactive a product variant
         for binding in record.prestashop_combinations_bind_ids:
-            resource = 'combinations/%s' % (binding.prestashop_id)
-            record.with_delay().export_delete_record(binding.backend_id,
-                                                     binding.prestashop_id)
+            work = self.work.work_on(collection=binding.backend_id)
+            binder = work.component(
+                usage='binder', model_name='prestashop.product.combination')
+            prestashop_id = binder.to_external(binding)
+            binding.with_delay().export_delete_record(
+                binding.backend_id, prestashop_id)
         record.prestashop_combinations_bind_ids.unlink()
 
     @skip_if(lambda self, record, **kwargs: self.no_connector_export(record))
     @skip_if(lambda self, record, **kwargs: self.need_to_export(record.prestashop_combinations_bind_ids, **kwargs))
     def on_record_write(self, record, fields=None):
         """ Called when a record is written """
-        for field in EXCLUDE_FIELDS:
-            fields.pop(field, None)
-        if 'active' in fields and not fields['active']:
+        for field in self.EXCLUDE_FIELDS:
+            if field in fields:
+                fields.remove(field)
+        if 'active' in fields and not record.active:
             self.prestashop_product_combination_unlink(record)
             return
         if fields:
             priority = 20
-            if 'default_on' in fields and fields['default_on']:
+            if 'default_on' in fields and record.active:
                 # PS has to uncheck actual default combination first
                 priority = 99
             for binding in record.prestashop_combinations_bind_ids:
@@ -93,17 +97,59 @@ class PrestashopAttributeListener(Component):
         record.with_delay().export_record(fields=fields)
 
 
-# class ProductAttributeListener(Component):
-#     _name = 'product.attribute.event.listener'
-#     _inherit = 'prestashop.connector.listener'
-#     _apply_on = [
-#         'product.attribute',
-#         'product.attribute.value',
-#     ]
+class AttributeListener(Component):
+    _name = 'attribute.event.listener'
+    _inherit = 'prestashop.connector.listener'
+    _apply_on = [
+        'product.attribute',
+    ]
 
-#     @skip_if(lambda self, record, **kwargs: self.no_connector_export(record))
-#     @skip_if(lambda self, record, **kwargs: self.need_to_export(record, **kwargs))
-#     def on_record_write(self, record, fields=None):
-#         """ Called when a record is written """
-#         for binding in record.prestashop_bind_ids:
-#             binding.with_delay().export_record(fields=fields)
+    @skip_if(lambda self, record, **kwargs: self.no_connector_export(record))
+    def on_record_write(self, record, fields=None):
+        """ Called when a record is written """
+        for binding in record.prestashop_bind_ids:
+            if not self.need_to_export(binding, fields):
+                binding.with_delay().export_record(fields=fields)
+
+    @skip_if(lambda self, record, **kwargs: self.no_connector_export(record))
+    def on_record_unlink(self, record, fields=None):
+        """ Called when a record is deleted """
+        for binding in record.prestashop_bind_ids:
+            work = self.work.work_on(collection=binding.backend_id)
+            binder = work.component(
+                usage='binder',
+                model_name='prestashop.product.combination.option')
+            prestashop_id = binder.to_external(binding)
+            if prestashop_id:
+                self.env['prestashop.product.combination.option'].\
+                    with_delay().export_delete_record(
+                        binding.backend_id, prestashop_id)
+
+
+class AttributeValueListener(Component):
+    _name = 'attribute.value.event.listener'
+    _inherit = 'prestashop.connector.listener'
+    _apply_on = [
+        'product.attribute.value',
+    ]
+
+    @skip_if(lambda self, record, **kwargs: self.no_connector_export(record))
+    def on_record_write(self, record, fields=None):
+        """ Called when a record is written """
+        for binding in record.prestashop_bind_ids:
+            if not self.need_to_export(binding, fields):
+                binding.with_delay().export_record(fields=fields)
+
+    @skip_if(lambda self, record, **kwargs: self.no_connector_export(record))
+    def on_record_unlink(self, record, fields=None):
+        """ Called when a record is deleted """
+        for binding in record.prestashop_bind_ids:
+            work = self.work.work_on(collection=binding.backend_id)
+            binder = work.component(
+                usage='binder',
+                model_name='prestashop.product.combination.option.value')
+            prestashop_id = binder.to_external(binding)
+            if prestashop_id:
+                self.env['prestashop.product.combination.option.value'].\
+                    with_delay().export_delete_record(
+                        binding.backend_id, prestashop_id)
