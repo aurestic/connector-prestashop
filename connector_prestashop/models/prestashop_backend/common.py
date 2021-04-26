@@ -75,6 +75,13 @@ class PrestashopBackend(models.Model):
         default=lambda self: self._default_pricelist_id(),
         help="Pricelist used in sales orders",
     )
+    route_id = fields.Many2one(
+        comodel_name='stock.location.route',
+        string='Route',
+        domain=[('sale_selectable', '=', True)],
+        help="Route used in sales orders",
+        ondelete='restrict',
+    )
     sale_team_id = fields.Many2one(
         comodel_name='crm.team',
         string='Sales Team',

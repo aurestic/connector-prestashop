@@ -252,9 +252,14 @@ class SaleOrderImportMapper(Component):
         return {'pricelist_id': self.backend_record.pricelist_id.id}
 
     @mapping
-    def sale_team(self, record):
+    def sale_team_id(self, record):
         if self.backend_record.sale_team_id:
             return {'team_id': self.backend_record.sale_team_id.id}
+
+    @mapping
+    def warehouse_id(self, record):
+        if self.backend_record.warehouse_id:
+            return {'warehouse_id': self.backend_record.warehouse_id.id}
 
     @mapping
     def backend_id(self, record):
@@ -509,6 +514,10 @@ class SaleOrderLineMapper(Component):
         for ps_tax in taxes:
             result |= self._find_tax(ps_tax['id'])
         return {'tax_id': [(6, 0, result.ids)]}
+
+    @mapping
+    def route_id(self, record):
+        return {'route_id': self.backend_record.route_id.id}
 
     @mapping
     def backend_id(self, record):
