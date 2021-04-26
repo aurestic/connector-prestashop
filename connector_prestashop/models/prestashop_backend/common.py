@@ -80,6 +80,7 @@ class PrestashopBackend(models.Model):
         string='Route',
         domain=[('sale_selectable', '=', True)],
         help="Route used in sales orders",
+        ondelete='restrict',
     )
     sale_team_id = fields.Many2one(
         comodel_name='crm.team',
