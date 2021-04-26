@@ -19,7 +19,7 @@ class ShopImportMapper(Component):
         return {'backend_id': self.backend_record.id}
 
     @mapping
-    def opener_id(self, record):
+    def odoo_id(self, record):
         return {'odoo_id': self.backend_record.warehouse_id.id}
 
 
