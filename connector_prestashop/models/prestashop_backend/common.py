@@ -129,6 +129,12 @@ class PrestashopBackend(models.Model):
         string='Importable sale order states',
         help="If valued only orders matching these states will be imported.",
     )
+    order_send_state_id = fields.Many2one(
+        comodel_name='sale.order.state',
+        string='Order send state',
+        help="Order state when picking is done.",
+        ondelete="restrict"
+    )
     active = fields.Boolean(
         string='Active',
         default=True
