@@ -114,6 +114,18 @@ class PrestashopSaleOrder(models.Model):
                 exporter = work.component(usage='sale.order.state.exporter')
                 return exporter.run(self, new_state)
 
+    @job(default_channel='root.prestashop')
+    @related_action(action='related_action_unwrap_binding')
+    @api.multi
+    def export_sale_order_send_state(self):
+        for sale in self:
+            ps_state = sale.backend_id.order_send_state_id.prestashop_bind_ids[:1].prestashop_id
+            if ps_state:
+                with sale.backend_id.work_on(self._name) as work:
+                    exporter = work.component(
+                        usage='sale.order.state.exporter')
+                    return exporter.run(self, ps_state)
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'

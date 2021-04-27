@@ -61,3 +61,9 @@ class PrestashopStockPickingListener(Component):
     def on_tracking_number_added(self, record):
         for binding in record.sale_id.prestashop_bind_ids:
             binding.with_delay().export_tracking_number()
+
+    def on_picking_out_done(self, record, method):
+        if method == 'complete':
+            for binding in record.sale_id.prestashop_bind_ids:
+                binding.with_delay().export_sale_order_send_state()
+        # TODO: method -> partial
