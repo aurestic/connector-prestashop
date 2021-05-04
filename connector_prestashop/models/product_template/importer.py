@@ -160,7 +160,7 @@ class TemplateMapper(Component):
             else:
                 code = record.get(self.backend_record.matching_product_ch)
                 if not code and self.backend_record.matching_product_ch == 'barcode':
-                        code = record.get('ean13')
+                    code = record.get('ean13')
                 if code:
                     if self.backend_record.matching_product_ch == 'reference':
                         if self._template_code_exists(code):
@@ -299,10 +299,11 @@ class TemplateMapper(Component):
         )
         return tax_group.tax_ids
 
-    @mapping
-    def taxes_id(self, record):
-        taxes = self._get_tax_ids(record)
-        return {'taxes_id': [(6, 0, taxes.ids)]}
+    # TOREVIEW: Tax rules group is not the same that odoo tax groups
+    # @mapping
+    # def taxes_id(self, record):
+    #     taxes = self._get_tax_ids(record)
+    #     return {'taxes_id': [(6, 0, taxes.ids)]}
 
     @mapping
     def type(self, record):

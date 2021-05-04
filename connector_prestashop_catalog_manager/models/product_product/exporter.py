@@ -87,7 +87,6 @@ class ProductCombinationExportMapper(Component):
         ('active', 'active'),
         ('barcode', 'ean13'),
         ('minimal_quantity', 'minimal_quantity'),
-        ('weight', 'weight'),
     ]
 
     def _get_factor_tax(self, tax):
@@ -123,6 +122,10 @@ class ProductCombinationExportMapper(Component):
     @mapping
     def cost_price(self, record):
         return {'wholesale_price': record.standard_price}
+
+    @mapping
+    def weight(self, record):
+        return {'weight': round(record.weight, 3)}
 
     def _get_product_option_value(self, record):
         option_value = []
