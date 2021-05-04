@@ -184,7 +184,6 @@ class ProductTemplateExportMapper(Component):
         ('available_for_order', 'available_for_order'),
         ('show_price', 'show_price'),
         ('online_only', 'online_only'),
-        ('weight', 'weight'),
         ('standard_price', 'wholesale_price'),
         (m2o_to_external('default_shop_id'), 'id_shop_default'),
         ('always_available', 'active'),
@@ -283,15 +282,16 @@ class ProductTemplateExportMapper(Component):
             }
         }
 
-    @changed_by('taxes_id')
-    @mapping
-    def tax_ids(self, record):
-        if not record.taxes_id:
-            return
-        binder = self.binder_for('prestashop.account.tax.group')
-        ext_id = binder.to_external(
-            record.taxes_id[:1].tax_group_id, wrap=True)
-        return {'id_tax_rules_group': ext_id}
+    # TOREVIEW: Tax rules group is not the same that odoo tax groups
+    # @changed_by('taxes_id')
+    # @mapping
+    # def tax_ids(self, record):
+    #     if not record.taxes_id:
+    #         return
+    #     binder = self.binder_for('prestashop.account.tax.group')
+    #     ext_id = binder.to_external(
+    #         record.taxes_id[:1].tax_group_id, wrap=True)
+    #     return {'id_tax_rules_group': ext_id}
 
     @changed_by('available_date')
     @mapping
@@ -299,6 +299,11 @@ class ProductTemplateExportMapper(Component):
         if record.available_date:
             return {'available_date': record.available_date}
         return {}
+
+    @changed_by('weight')
+    @mapping
+    def weight(self, record):
+        return {'weight': round(record.weight, 3)}
 
     # @mapping
     # def default_image(self, record):
