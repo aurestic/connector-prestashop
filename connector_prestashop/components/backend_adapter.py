@@ -211,12 +211,27 @@ class GenericAdapter(AbstractComponent):
 
     def write(self, id, attributes=None):
         """ Update records on the external system """
-        attributes['id'] = id
         _logger.debug(
             'method write, model %s, attributes %s',
             self._prestashop_model,
             str(attributes)
         )
+
+        # If fields are not send to prestsashop, prestashop sets it to null,
+        # then first read record and second change the values
+        values = self.client.get(self._prestashop_model, id)
+        schema = self.client.get(
+            self._prestashop_model, options={'schema': 'blank'})
+        schema = schema[self._export_node_name]
+        values = values[self._export_node_name]
+        if 'position_in_category' in values:
+            del(values['position_in_category'])
+        values.update((k, attributes[k])
+                      for k in values.keys() & attributes.keys())
+        schema.update((k, values[k]) for k in schema.keys() & values.keys())
+        attributes = schema
+        attributes['id'] = id
+
         res = self.client.edit(
             self._prestashop_model, {self._export_node_name: attributes})
         if self._export_node_name_res:
