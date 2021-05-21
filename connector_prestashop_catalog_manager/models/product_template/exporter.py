@@ -36,7 +36,6 @@ class ProductTemplateExporter(Component):
 
     def _create(self, record):
         res = super(ProductTemplateExporter, self)._create(record)
-        self.write_binging_vals(self.binding, record)
         return res['prestashop']['product']['id']
 
     def _update(self, data):
@@ -45,21 +44,6 @@ class ProductTemplateExporter(Component):
         self.export_variants()
         self.check_images()
         self.backend_adapter.write(self.prestashop_id, data)
-
-    def write_binging_vals(self, erp_record, ps_record):
-        keys_to_update = [
-            ('description_short_html', 'description_short'),
-            ('description_html', 'description'),
-        ]
-        trans = self.component(usage='record.importer')
-        splitted_record = trans._split_per_language(ps_record)
-        for lang_code, prestashop_record in splitted_record.items():
-            vals = {}
-            for key in keys_to_update:
-                vals[key[0]] = prestashop_record[key[1]]
-            erp_record.with_context(
-                connector_no_export=True,
-                lang=lang_code).write(vals)
 
     def export_categories(self, category):
         if not category:
