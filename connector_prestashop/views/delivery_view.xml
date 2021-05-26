@@ -20,6 +20,7 @@
                 <field name="product_id" readonly="1"/>
                 <field name="active" readonly="1"/>
                 <field name="odoo_id" string="Delivery method" />
+                <field name="route_id" />
             </group>
         </form>
     </field>
@@ -32,6 +33,7 @@
             <field name="name_ext"/>
             <field name="active_ext"/>
             <field name="export_tracking" string="Export tracking"/>
+            <field name="route_id"/>
             <field name="sync_date" string="Last synchro"/>
             <field name="prestashop_id"/>
             <field name="odoo_id" string="Delivery method" />
