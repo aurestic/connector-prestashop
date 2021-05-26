@@ -168,6 +168,9 @@ class PrestashopSaleOrderLine(models.Model):
             ('id', '=', vals['prestashop_order_id'])
         ], limit=1)
         vals['order_id'] = ps_sale_order.odoo_id.id
+        route = ps_sale_order.odoo_id.carrier_id.prestashop_bind_ids[:1].route_id
+        if route:
+            vals['route_id'] = route.id
         return super(PrestashopSaleOrderLine, self).create(vals)
 
 

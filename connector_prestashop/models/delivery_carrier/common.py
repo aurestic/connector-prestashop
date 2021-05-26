@@ -37,6 +37,14 @@ class PrestashopDeliveryCarrier(models.Model):
         string='Export tracking numbers to PrestaShop',
     )
 
+    route_id = fields.Many2one(
+        comodel_name='stock.location.route',
+        string='Route',
+        domain=[('sale_selectable', '=', True)],
+        help="Route used in sales orders",
+        ondelete='restrict',
+    )
+
     _sql_constraints = [
         ('prestashop_erp_uniq', 'unique(backend_id, odoo_id, id_reference)',
          'An ERP record with same ID already exists on PrestaShop with the '
