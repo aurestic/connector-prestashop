@@ -153,7 +153,10 @@ class PrestashopProductTemplate(models.Model):
 
     @api.multi
     def _prestashop_qty(self):
-        return self.qty_available
+        qty = self.qty_available
+        if qty < 0:
+            qty = 0.0
+        return qty
 
     @job(default_channel='root.prestashop')
     def import_products(self, backend, since_date=None, **kwargs):
