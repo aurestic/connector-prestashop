@@ -504,7 +504,15 @@ class SaleOrderLineMapper(Component):
             key = 'unit_price_tax_incl'
         else:
             key = 'unit_price_tax_excl'
-        price_unit = record[key]
+        if record['reduction_percent']:
+            reduction = Decimal(record['reduction_percent'])
+            if reduction != 100:
+                price = Decimal(record[key])
+                price_unit = price / ((100 - reduction) / 100)
+            else:
+                price_unit = record['original_product_price']
+        else:
+            price_unit = record[key]
         return {'price_unit': price_unit}
 
     @mapping
