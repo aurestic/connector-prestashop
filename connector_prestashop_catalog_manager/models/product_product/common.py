@@ -56,6 +56,7 @@ class ProductProductListener(Component):
                 binding.backend_id, prestashop_id)
         record.prestashop_combinations_bind_ids.unlink()
 
+    @skip_if(lambda self, record, **kwargs: self.env.context.get('install_mode'))
     @skip_if(lambda self, record, **kwargs: self.no_connector_export(record))
     @skip_if(lambda self, record, **kwargs: self.need_to_export(record.prestashop_combinations_bind_ids, **kwargs))
     def on_record_write(self, record, fields=None):

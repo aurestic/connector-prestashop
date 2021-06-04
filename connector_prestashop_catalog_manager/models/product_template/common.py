@@ -66,12 +66,10 @@ class PrestashopProductTemplateListener(Component):
         """ Called when a record is written """
         record.with_delay().export_record(fields=fields)
         if 'minimal_quantity' in fields:
-            ps_template = session.env[model_name].browse(record_id)
-            for binding in ps_template.prestashop_bind_ids:
-                binding.odoo_id.mapped(
-                    'product_variant_ids.prestashop_bind_ids').write({
-                        'minimal_quantity': binding.minimal_quantity
-                    })
+            record.product_variant_ids.mapped(
+                'prestashop_combinations_bind_ids').filtered(
+                    lambda cb: cb.backend_id == record.backend_id).write({
+                        'minimal_quantity': record.minimal_quantity})
 
 
 class ProductTemplateListener(Component):
@@ -79,6 +77,7 @@ class ProductTemplateListener(Component):
     _inherit = 'prestashop.connector.listener'
     _apply_on = 'product.template'
 
+    @skip_if(lambda self, record, **kwargs: self.env.context.get('install_mode'))
     @skip_if(lambda self, record, **kwargs: self.no_connector_export(record))
     @skip_if(lambda self, record, **kwargs: self.need_to_export(record.prestashop_bind_ids, **kwargs))
     def on_record_write(self, record, fields=None):
