@@ -169,6 +169,8 @@ class PrestashopProductCombination(models.Model):
             new_qty = product_binding._prestashop_qty()
             if product_binding.quantity != new_qty:
                 product_binding.quantity = new_qty
+            elif self.env.context.get('force_export_qty'):
+                product_binding.quantity = new_qty
         return True
 
     def _prestashop_qty(self):

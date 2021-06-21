@@ -149,6 +149,8 @@ class PrestashopProductTemplate(models.Model):
                 new_qty = product._prestashop_qty()
                 if product.quantity != new_qty:
                     product.quantity = new_qty
+                elif self.env.context.get('force_export_qty'):
+                    product.quantity = new_qty
         return True
 
     @api.multi
