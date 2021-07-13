@@ -441,12 +441,6 @@ class SaleOrderImporter(Component):
                     'Carrier not found, set default carrier and retry.')
         binding.odoo_id.recompute()
 
-    def _create(self, data):
-        binding = super(SaleOrderImporter, self)._create(data)
-        if binding.fiscal_position_id:
-            binding.odoo_id._compute_tax_id()
-        return binding
-
     def _after_import(self, binding):
         super(SaleOrderImporter, self)._after_import(binding)
         self._split_discount_lines_by_taxes(binding)
