@@ -58,6 +58,20 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="action_prestashop_tax" model="ir.actions.act_window">
+        <field name="name">Tax</field>
+        <field name="res_model">prestashop.account.tax</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_prestashop_tax_group" model="ir.actions.act_window">
+        <field name="name">Tax Groups</field>
+        <field name="res_model">prestashop.account.tax.group</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
     <!-- TODO: Implement security strategy groups="odoo_base.group_oc_manager" -->
     <menuitem id="menu_prestashop_external_objects" name="External Objects"
         parent="menu_prestashop_root" 
@@ -79,5 +93,9 @@
         action="action_prestashop_product_templates" />
     <menuitem id="menu_prestashop_external_products" name="External Products"
         parent="menu_prestashop_external_objects" action="action_prestashop_products" />
+    <menuitem id="menu_action_prestashop_tax" name="External Tax"
+        parent="menu_prestashop_external_objects" action="action_prestashop_tax" />
+    <menuitem id="menu_action_prestashop_tax_group" name="External Tax Groups"
+        parent="menu_prestashop_external_objects" action="action_prestashop_tax_group" />
 
 </odoo>
