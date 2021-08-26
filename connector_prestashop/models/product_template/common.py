@@ -146,7 +146,7 @@ class PrestashopProductTemplate(models.Model):
                                      compute_child=False)
         for product in self_loc:
             if product.type == 'product':
-                new_qty = product._prestashop_qty()
+                new_qty = product._prestashop_qty(backend)
                 if product.quantity != new_qty:
                     product.quantity = new_qty
                 elif self.env.context.get('force_export_qty'):
@@ -159,8 +159,8 @@ class PrestashopProductTemplate(models.Model):
         return True
 
     @api.multi
-    def _prestashop_qty(self):
-        qty = self.qty_available
+    def _prestashop_qty(self, backend):
+        qty = self[backend.quantity_field]
         if qty < 0:
             qty = 0.0
         return qty

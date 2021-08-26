@@ -166,15 +166,15 @@ class PrestashopProductCombination(models.Model):
         self_loc = self.with_context(location=locations.ids,
                                      compute_child=False)
         for product_binding in self_loc:
-            new_qty = product_binding._prestashop_qty()
+            new_qty = product_binding._prestashop_qty(backend)
             if product_binding.quantity != new_qty:
                 product_binding.quantity = new_qty
             elif self.env.context.get('force_export_qty'):
                 product_binding.quantity = new_qty
         return True
 
-    def _prestashop_qty(self):
-        return self.qty_available
+    def _prestashop_qty(self, backend):
+        return self[backend.quantity_field]
 
     @job(default_channel='root.prestashop')
     def export_inventory(self, fields=None):
