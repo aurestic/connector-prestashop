@@ -18,6 +18,17 @@ except:
     _logger.debug('Cannot import from `prestapyt`')
 
 
+def merge(dict1, dict2):
+    for key, value in dict1.items():
+        if isinstance(value, dict):
+            node = dict2.setdefault(key, {})
+            merge(value, node)
+        else:
+            dict2[key] = value
+
+    return dict2
+
+
 @contextmanager
 def api_handle_errors(message=''):
     """ Handle error when calling the API
@@ -216,7 +227,6 @@ class GenericAdapter(AbstractComponent):
             self._prestashop_model,
             str(attributes)
         )
-
         # If fields are not send to prestsashop, prestashop sets it to null,
         # then first read record and second change the values
         values = self.client.get(self._prestashop_model, id)
@@ -226,8 +236,7 @@ class GenericAdapter(AbstractComponent):
         values = values[self._export_node_name]
         if 'position_in_category' in values:
             del(values['position_in_category'])
-        values.update((k, attributes[k])
-                      for k in values.keys() & attributes.keys())
+        values = merge(attributes, values)
         schema.update((k, values[k]) for k in schema.keys() & values.keys())
         attributes = schema
         attributes['id'] = id
