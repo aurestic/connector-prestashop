@@ -293,7 +293,10 @@ class SaleOrderImportMapper(Component):
         if self.backend_record.tz:
             local = pytz.timezone(self.backend_record.tz)
             naive = fields.Datetime.from_string(date_order)
-            local_dt = local.localize(naive, is_dst=None)
+            is_dst = None
+            if not naive.tzinfo:
+                is_dst = True
+            local_dt = local.localize(naive, is_dst=is_dst)
             date_order = fields.Datetime.to_string(local_dt.astimezone(
                 pytz.utc))
         return {'date_order': date_order}
