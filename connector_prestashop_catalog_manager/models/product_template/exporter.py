@@ -113,6 +113,8 @@ class ProductTemplateExporter(Component):
                         'odoo_id': product.id,
                         'main_template_id': self.binding_id,
                     })
+                # sólo lo exportamos si se ha creado uno nuevo y
+                # con la función nueva export_record_saving_prestashop_id
                 combination.with_delay(
                     priority=50,
                     eta=timedelta(seconds=20)
