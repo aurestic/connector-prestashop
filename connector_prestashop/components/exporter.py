@@ -75,11 +75,10 @@ class PrestashopBaseExporter(AbstractComponent):
         # cuando crea la combinación y utiliza el binder, no sé por qué
         # devuelve un diccionario, no un id de prestashop
         # entonces el binder.bind peta y no se guarda el prestashop_id
-        # lo parseamos y lo guardamos en vez de hacer el binder bind
+        # lo parseamos y se lo pasamos para hacer el binder bind
         presta_id = self.prestashop_id.get(
             'prestashop', {}).get(
             'combination', {}).get('id', 0)
-        # self.env.cr.commit()
         self.binder.bind(presta_id, self.binding)
         # commit so we keep the external ID if several cascading exports
         # are called and one of them fails
