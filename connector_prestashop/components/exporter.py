@@ -67,6 +67,26 @@ class PrestashopBaseExporter(AbstractComponent):
         """Create records of dependants prestashop objects"""
         return
 
+    def run_saving_prestashop_id(self, binding, *args, **kwargs):
+        self.binding_id = binding.id
+        self.binding = binding
+        self.prestashop_id = self.binder.to_external(self.binding)
+        result = self._run(*args, **kwargs)
+        # cuando crea la combinación y utiliza el binder, no sé por qué
+        # devuelve un diccionario, no un id de prestashop
+        # entonces el binder.bind peta y no se guarda el prestashop_id
+        # lo parseamos y lo guardamos en vez de hacer el binder bind
+        presta_id = self.prestashop_id.get(
+            'prestashop', {}).get(
+            'combination', {}).get('id', 0)
+        # self.env.cr.commit()
+        self.binder.bind(presta_id, self.binding)
+        # commit so we keep the external ID if several cascading exports
+        # are called and one of them fails
+        self.env.cr.commit()  # pylint: disable=invalid-commit
+        self._after_export()
+        return result
+
 
 class PrestashopExporter(AbstractComponent):
     """ A common flow for the exports to PrestaShop """

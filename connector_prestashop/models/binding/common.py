@@ -70,6 +70,17 @@ class PrestashopBinding(models.AbstractModel):
     @job(default_channel='root.prestashop')
     @related_action(action='related_action_record')
     @api.multi
+    def export_record_saving_prestashop_id(self, fields=None):
+        """ Export a record on PrestaShop """
+        self.ensure_one()
+        self.check_active(self.backend_id)
+        with self.backend_id.work_on(self._name) as work:
+            exporter = work.component(usage='record.exporter')
+            return exporter.run_saving_prestashop_id(self, fields)
+
+    @job(default_channel='root.prestashop')
+    @related_action(action='related_action_record')
+    @api.multi
     def export_delete_record(self, backend, external_id, attributes=None):
         """ Delete a record on PrestaShop """
         self.check_active(backend)
