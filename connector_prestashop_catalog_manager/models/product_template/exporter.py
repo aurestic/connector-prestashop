@@ -102,21 +102,23 @@ class ProductTemplateExporter(Component):
         for product in self.binding.product_variant_ids:
             if not product.attribute_value_ids:
                 continue
-            combination_ext = combination_obj.search([
+            combination = combination_obj.search([
                 ('backend_id', '=', self.backend_record.id),
                 ('odoo_id', '=', product.id),
-            ])
-            if not combination_ext:
-                combination_ext = combination_obj.with_context(
+            ], limit=1)
+            if not combination:
+                combination = combination_obj.with_context(
                     connector_no_export=True).create({
                         'backend_id': self.backend_record.id,
                         'odoo_id': product.id,
                         'main_template_id': self.binding_id,
                     })
-            # If a template has been modified then always update PrestaShop
-            # combinations
-            combination_ext.with_delay(
-                priority=50, eta=timedelta(seconds=20)).export_record()
+                # sólo lo exportamos si se ha creado uno nuevo y
+                # con la función nueva export_record_saving_prestashop_id
+                combination.with_delay(
+                    priority=50,
+                    eta=timedelta(seconds=20)
+                ).export_record_saving_prestashop_id()
 
     def _not_in_variant_images(self, image):
         images = []
