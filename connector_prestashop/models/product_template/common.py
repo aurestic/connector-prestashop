@@ -145,17 +145,16 @@ class PrestashopProductTemplate(models.Model):
         self_loc = self.with_context(location=locations.ids,
                                      compute_child=False)
         for product in self_loc:
-            if product.type == 'product':
-                new_qty = product._prestashop_qty(backend)
-                if product.quantity != new_qty:
-                    product.quantity = new_qty
-                elif self.env.context.get('force_export_qty'):
-                    product.quantity = new_qty
-                varaints_binds = product.product_variant_ids.mapped(
-                    'prestashop_combinations_bind_ids')
-                for variant_bind in varaints_binds:
-                    variant_bind._recompute_prestashop_qty_backend(
-                        variant_bind.backend_id)
+            new_qty = product._prestashop_qty(backend)
+            if product.quantity != new_qty:
+                product.quantity = new_qty
+            elif self.env.context.get('force_export_qty'):
+                product.quantity = new_qty
+            varaints_binds = product.product_variant_ids.mapped(
+                'prestashop_combinations_bind_ids')
+            for variant_bind in varaints_binds:
+                variant_bind._recompute_prestashop_qty_backend(
+                    variant_bind.backend_id)
         return True
 
     @api.multi
