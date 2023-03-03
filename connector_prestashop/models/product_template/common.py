@@ -145,7 +145,7 @@ class PrestashopProductTemplate(models.Model):
         self_loc = self.with_context(location=locations.ids,
                                      compute_child=False)
         for product in self_loc:
-            if self_loc.no_export:
+            if product.no_export:
                 continue
             new_qty = product._prestashop_qty(backend)
             if product.quantity != new_qty:
