@@ -166,6 +166,8 @@ class PrestashopProductCombination(models.Model):
         self_loc = self.with_context(location=locations.ids,
                                      compute_child=False)
         for product_binding in self_loc:
+            if product_binding.no_export:
+                continue
             new_qty = product_binding._prestashop_qty(backend)
             if product_binding.quantity != new_qty:
                 product_binding.quantity = new_qty
